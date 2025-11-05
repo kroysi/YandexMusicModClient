@@ -236,3 +236,88 @@ function makeDecryptor(keyHex) {
 }
 
 exports.makeDecryptor = makeDecryptor;
+
+function artists2string(artists) {
+    if (!artists || artists?.length === 0) return;
+    if (artists.length <= 1) return artists?.[0].name;
+    let string = artists.shift()?.name;
+    artists.forEach((a) => {
+        string += " & " + a.name;
+    });
+    return string;
+}
+
+exports.artists2string = artists2string;
+
+
+function getFileExtensionFromCodec(codec) {
+    return codec
+    .replaceAll("he-aac", "m4a")
+    .replaceAll("aac", "m4a")
+    .replace(/(.*)-mp4/, "$1");
+}
+exports.getFileExtensionFromCodec = getFileExtensionFromCodec;
+
+function removeInvalidCharsFromFilename(str) {
+    return str.replace(/[/\\?%*:|"<>]/g, "_");
+}
+exports.removeInvalidCharsFromFilename = removeInvalidCharsFromFilename;
+
+function removeInvalidEndingsFromTrackTitle(str) {
+    if (str.endsWith(".mp3")) str.replaceAll(".mp3", "");
+    if (str.endsWith(".mp4")) str.replaceAll(".mp4", "");
+    if (str.endsWith(".m4a")) str.replaceAll(".m4a", "");
+    if (str.endsWith(".flac")) str.replaceAll(".flac", "");
+    return str;
+}
+exports.removeInvalidEndingsFromTrackTitle = removeInvalidEndingsFromTrackTitle;
+
+function LRC2SYLT(lrcString) {
+    const lines = lrcString.split(/\r?\n/);
+    const result = [];
+
+    const timeTagRegex = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,2}))?\]/g;
+    const metaTagRegex = /^\[(ar|ti|al|by|offset|re|ve):.*?\]$/i;
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        // Игнорируем метаданные
+        if (metaTagRegex.test(trimmed)) continue;
+
+        let match;
+        const times = [];
+        let text = trimmed;
+
+        // Извлекаем все временные теги
+        while ((match = timeTagRegex.exec(trimmed)) !== null) {
+            const minutes = parseInt(match[1], 10);
+            const seconds = parseInt(match[2], 10);
+            const hundredths = match[3] ? parseInt(match[3].padEnd(2, '0'), 10) : 0;
+            const timestamp = (minutes * 60 + seconds) * 1000 + hundredths * 10;
+            times.push(timestamp);
+        }
+
+        // Убираем временные теги из текста
+        text = trimmed.replace(timeTagRegex, '').trim();
+
+        // Если нет текста — пропускаем
+        if (!text) continue;
+
+        // Добавляем элементы synchronisedText
+        for (const timeStamp of times) {
+            result.push({
+                text,
+                timeStamp
+            });
+        }
+    }
+
+    // Сортируем по времени
+    result.sort((a, b) => a.timeStamp - b.timeStamp);
+
+    return result;
+}
+
+exports.LRC2SYLT = LRC2SYLT;
