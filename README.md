@@ -3,7 +3,7 @@
 
 <p align="left">
 	<a href="https://discord.gg/HGNKDxwHEH">
-      <img height="35.48" alt="Сервер" src="https://github.com/user-attachments/assets/b7c8a272-b48c-411f-aca3-6512086a9a18">
+      <img width="113" alt="Сервер" src="https://github.com/user-attachments/assets/b7c8a272-b48c-411f-aca3-6512086a9a18">
    </a>
    <a href="https://github.com/TheKing-OfTime/YandexMusicModClient/">
       <img width="96" alt="Русский" src="https://github.com/TheKing-OfTime/YandexMusicModClient/blob/master/assets/Ru_Badge_Highlighted.png">
@@ -15,23 +15,13 @@
 
 ### Это модификация для [настольного приложения Яндекс Музыка](https://music.yandex.com/download/), главная задача которой — добавить недостающие ванильному клиенту функции.
 
-> [!IMPORTANT]  
+> [!CAUTION]  
 > ### Данная модификация НЕ даёт возможность пользоваться сервисом БЕЗ подписки Яндекс Плюс
 
-#### YandexMusicModClient или его разработчик не связаны с Яндексом или какой-либо из их компаний, сотрудников и т.д.
-
-<details>
-   <summary>Сообщение для сотрудников Яндекс Музыки</summary>
-
-Поскольку вы сочли мой код и идеи полезными и скопировали некоторые из них:
-
-- [PLAYER_ACTION](https://github.com/TheKing-OfTime/YandexMusicModClient/commit/5384285a8de1101102fc21f593266807b38a304f#diff-c314348839e9fcfdd871cc449297e9cf3f9631701ff29758014ba11bf9200ba0)
-- [Локальное переопределение экспериментов](https://github.com/TheKing-OfTime/YandexMusicModClient/commit/ea1939b5e81815bce7aa02c26ee3b165fd1396f3) (Появилось в ванильной версии через [~40 дней](https://github.com/TheKing-OfTime/YandexMusicModClient/commit/8ab94847fe36fe19e3500ab331adcb175f110387))
-- [Исправление проблемы, из-за которой эквалайзер не применялся при запуске приложения](https://github.com/TheKing-OfTime/YandexMusicModClient/commit/7ebf999a87a0ffcfaa1d8ef5a4d576cbae853e3b) (Появилось в ванильной версии через ~50 дней с выходом 5.48.1)
-
-и добавили их в ванильный клиент, возможно, вы захотите нанять меня.
-Моя работа будет намного эффективнее, если я буду работать над исходным кодом в уютном офисе, а не с минифицированной и прогнанной через webpack версией кода
-</details>
+> [!IMPORTANT]  
+> #### Меня взяли на стажировку в Яндекс. 🎉
+> Взяли к сожалению не в Яндекс Музыку, по этому проект пока что не будет заархивирован. Однако контентных обновлений будет меньше.
+> Это касается миграций и новых функций. Регулярность спуфов и фиксов не изменится
 
 ## Установка
 
@@ -413,8 +403,11 @@ node toolset.js rebuild
    <a href="https://github.com/Ryto0">
       <img width="50" alt="Ryto0" src="https://avatars.githubusercontent.com/u/113520566?v=4">
    </a>
-   <a href=" https://github.com/Rubikoid">
+   <a href="https://github.com/Rubikoid">
       <img width="50" alt="Rubikoid" src="https://avatars.githubusercontent.com/u/5082689?v=4">
+   </a>
+   <a href="https://github.com/NeoDaniil">
+      <img width="50" alt="NeoDaniil" src="https://avatars.githubusercontent.com/u/242981313?v=4">
    </a>
 </p>
 
