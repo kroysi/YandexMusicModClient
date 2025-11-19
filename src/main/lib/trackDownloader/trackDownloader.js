@@ -12,7 +12,7 @@ const { createDirIfNotExist } = require("../utils.js");
 
 const TMP_PATH = path.join(electron.app.getAppPath(), "../../", "\\temp");
 const MAX_CONCURRENT_DOWNLOADS = 3;
-const API_REQUESTS_BATCH_LIMIT = 100;
+const API_REQUESTS_BATCH_LIMIT = 50;
 
 
 function getTrackFilename(track) {
@@ -211,7 +211,9 @@ class TrackDownloader {
 
     async downloadMultipleTracks(trackIds, subDirName, callback) {
         const useMP3 = store_js_1.getModFeatures()?.downloader?.useMP3 ?? false;
-        const totalTracks = trackIds.length;
+
+        let totalTracks = 0;
+
         if (!(store_js_1.getModFeatures()?.downloader?.useDefaultPath || store_js_1.getModFeatures()?.downloader?.defaultPath)) {
             this.logger.log("No default path set, canceling multiple track download.");
             return;
@@ -232,23 +234,33 @@ class TrackDownloader {
             tracksMeta.push(...metas);
         }
 
+        const requestedTracks = {};
+
+        tracksDownloadInfo.forEach((downloadInfo) => {
+            if(!downloadInfo.url) return;
+            requestedTracks[downloadInfo.trackId] = { downloadInfo, trackMeta: tracksMeta.find(track => track.id === downloadInfo.trackId) };
+            totalTracks++;
+        })
+
         const trackProgress = new Map();
 
         const updateTotalProgress = () => {
             const total = Array.from(trackProgress.values()).reduce((a, b) => a + b, 0);
             const overall = total / totalTracks;
-            callback(overall, overall);
+            callback(overall, overall, `${Math.floor(total)} / ${totalTracks}`);
         };
 
-        const tasks = trackIds.map((trackId, i) => async () => {
-            const trackDownloadInfo = tracksDownloadInfo[i];
+        const tasks = trackIds.map((trackId) => async () => {
+            this.logger?.log?.(`Mapping track: ${trackId}`);
+            const requestedTrack = requestedTracks[`${trackId}`.split(':')[0]];
+            const trackDownloadInfo = requestedTrack.downloadInfo;
 
             const data = {
                 downloadURL: trackDownloadInfo.url,
                 codec: trackDownloadInfo.codec,
                 bitrate: trackDownloadInfo.bitrate,
-                trackId,
-                track: tracksMeta[i],
+                trackId: trackDownloadInfo.trackId,
+                track: requestedTrack.trackMeta,
                 transport: trackDownloadInfo.transport,
                 key: trackDownloadInfo.key,
                 subDirName: removeInvalidCharsFromFilename(subDirName),
@@ -268,10 +280,7 @@ class TrackDownloader {
         await this.resolveInBatches(tasks, MAX_CONCURRENT_DOWNLOADS);
         this.logger.log("All tracks downloaded");
 
-
-        setTimeout(() => callback(-1, -1), 1000);
-
-
+        setTimeout(() => callback(-1, -1), 5000);
     }
 
     async downloadTrack(data, callback) {
