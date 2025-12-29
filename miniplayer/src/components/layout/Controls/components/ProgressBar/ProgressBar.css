@@ -1,0 +1,34 @@
+:root {
+    --progress-bar-gap: 10px;
+}
+
+.ProgressBar_slider {
+    width: var(--cover-size);
+    transition: var(--cover-width-transition)
+}
+
+.ProgressBar_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: var(--progress-bar-gap);
+    max-width: 90vw;
+    transition: var(--cover-width-transition);
+    min-width: 245px;
+
+    @media (min-height: 550px) {
+        margin-bottom: 16px;
+    }
+}
+
+.ProgressBar_timestamp_hover {
+    opacity: 0;
+}
+
+.ProgressBar_container:hover {
+    .ProgressBar_timestamp_hover {
+        opacity: 1;
+    }
+}

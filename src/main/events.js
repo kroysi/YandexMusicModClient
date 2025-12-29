@@ -46,6 +46,7 @@ const trackDownloader_js_1 = require("./lib/trackDownloader/trackDownloader.js")
 const taskBarExtension_js_1 = require("./lib/taskBarExtension/taskBarExtension.js");
 const isAccelerator = require("electron-is-accelerator");
 const modUpdater_js_1 = require("./lib/modUpdater.js");
+const miniPlayer_js_1 = require('./lib/miniplayer/miniplayer.js');
 const scrobbleManager_js_1 = require("./lib/scrobble/index.js");
 const playerActions_js_1 = require("./types/playerActions.js");
 const { throttle } = require("./lib/utils.js");
@@ -59,6 +60,10 @@ const isBoolean = (value) => {
 const PROGRESS_BAR_THROTTLE_MS = 200;
 
 let mainWindow = undefined;
+
+const MiniPlayer = miniPlayer_js_1.getMiniPlayer();
+
+MiniPlayer.updateSettingsState(store_js_1.getModFeatures());
 
 const updateGlobalShortcuts = () => {
     eventsLogger.info("(GlobalShortcuts) Update triggered.");
@@ -78,12 +83,10 @@ const updateGlobalShortcuts = () => {
 
             if (shortcut[1] && isAccelerator(shortcut[1])) {
                 electron_1.globalShortcut.register(shortcut[1], () => {
-                    const actions = shortcut[0].split(" ");
-                    actions.forEach((action) => {
-                        sendPlayerAction(
-                            mainWindow,
-                            playerActions_js_1.PlayerActions[action],
-                        );
+                    const commands = shortcut[0].split(" ");
+                    commands.forEach((command) => {
+                        const [action, value] = command.split('|');
+                        sendPlayerAction(mainWindow, playerActions_js_1.PlayerActions[action], value);
                     });
                 });
             } else {
@@ -401,6 +404,7 @@ const handleApplicationEvents = (window) => {
         (0, taskBarExtension_js_1.onPlayerStateChange)(window, data);
         (0, scrobbleManager_js_1.handlePlayingStateEvent)(data);
         (0, discordRichPresence_js_1.discordRichPresence)(data);
+        MiniPlayer.updatePlayerState(data);
     });
     electron_1.ipcMain.on(events_js_1.Events.YNISON_STATE, (event, data) => {
         eventsLogger.info(`Event received`, events_js_1.Events.YNISON_STATE);
@@ -453,8 +457,14 @@ const handleApplicationEvents = (window) => {
             if (key === "modFeatures.globalShortcuts.enable") {
                 updateGlobalShortcuts();
             }
+            MiniPlayer.updateSettingsState(store_js_1.getModFeatures());
         },
     );
+
+    electron_1.ipcMain.on(events_js_1.Events.TOGGLE_MINIPLAYER, (event) => {
+        eventsLogger.info(`Event received`, events_js_1.Events.TOGGLE_MINIPLAYER);
+        MiniPlayer.toggle();
+    });
 
     electron_1.ipcMain.handle(
         events_js_1.Events.GET_PASSPORT_LOGIN,
@@ -561,6 +571,7 @@ const sendNativeStoreUpdate = (key, value, window = undefined) => {
         key,
         value,
     );
+    MiniPlayer.updateSettingsState(store_js_1.getModFeatures());
     if (window ?? mainWindow) {
         eventsLogger.info(
             "Event send",
@@ -684,7 +695,7 @@ const sendProgressBarChange = (window, elementType, progress, statusLabel) => {
 exports.sendProgressBarChange = sendProgressBarChange;
 const sendShowReleaseNotes = (window) => {
     window.webContents.send(events_js_1.Events.SHOW_RELEASE_NOTES);
-    eventsLogger.info("Event sent", events_js_1.Events.SHOW_RELEASE_NOTES);
+    eventsLogger.info('Event sent', events_js_1.Events.SHOW_RELEASE_NOTES);
 };
 exports.sendShowReleaseNotes = sendShowReleaseNotes;
 const sendRefreshApplicationData = (window) => {
@@ -695,16 +706,18 @@ const sendRefreshApplicationData = (window) => {
     );
 };
 exports.sendRefreshApplicationData = sendRefreshApplicationData;
-const sendPlayerAction = (window, action) => {
+const sendPlayerAction = (window, action, value) => {
     window.webContents.send(
         events_js_1.Events.PLAYER_ACTION,
         action,
+        value,
         Date.now(),
     );
     eventsLogger.info(
         "Event sent",
         events_js_1.Events.PLAYER_ACTION,
         action,
+        value,
         Date.now(),
     );
 };
@@ -781,3 +794,9 @@ electron_1.ipcMain.handle("zoom-out", zoomOut);
 electron_1.ipcMain.handle("reset-zoom", resetZoom);
 electron_1.ipcMain.handle("get-zoom-level", getZoomLevel);
 electron_1.ipcMain.handle("set-zoom-level", setZoomLevel);
+
+
+MiniPlayer.onPlayerAction((action, value) => {
+    sendPlayerAction(mainWindow, action, value);
+});
+

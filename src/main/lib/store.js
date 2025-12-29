@@ -202,6 +202,19 @@ const init = () => {
       useCustomPathForSessionStorage: false,
       customPathForSessionStorage: "",
     },
+    miniplayer: {
+      skipTaskbar: false,
+      savePosition: false,
+      saveDimensions: false,
+      alwaysShowPlayerTimestamps: store.get(store_js_1.StoreKeys.MOD_FEATURES)?.playerBarEnhancement?.alwaysShowPlayerTimestamps ?? false,
+      window: {
+        alwaysOnTop: false,
+        width: 380,
+        height: 590,
+        x: 0,
+        y: 0,
+      }
+    },
     tryEnableSurroundAudio: false,
     showNonMusicPage: true,
     enableHardwareAcceleration: true,
