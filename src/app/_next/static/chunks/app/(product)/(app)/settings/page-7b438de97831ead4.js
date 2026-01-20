@@ -672,7 +672,7 @@
                     disabled: disabled,
                     ...other
                 } = e;
-                return (0, i.jsx)(Tooltip.hj, {
+                return tooltip ? (0, i.jsx)(Tooltip.hj, {
                     title: tooltip.title,
                     description: tooltip.description,
                     children: (0, i.jsxs)('div', {
@@ -687,6 +687,17 @@
                         },
                         children: label,
                     }),
+                }) : (0, i.jsxs)('div', {
+                    style: {
+                        'margin-inline': '5px',
+                        'background-color': color,
+                        color: 'black',
+                        'border-radius': '50px',
+                        'padding-inline': '6px',
+                        transition: 'opacity var(--ym-duration-transition)',
+                        ...(disabled ? { opacity: 0.3 } : {}),
+                    },
+                    children: label,
                 });
             };
 
@@ -1153,7 +1164,6 @@
                 );
             });
             let scrobblersSettings = (0, n.PA)(() => {
-
                 let { formatMessage: e } = (0, r.A)(),
                     {
                         modals: { scrobblersSettingsModal: t },
@@ -1309,7 +1319,6 @@
             });
 
             let ynisonSettings = (0, n.PA)(() => {
-
                 let { formatMessage: e } = (0, r.A)(),
                     {
                         modals: { ynisonSettingsModal: t },
@@ -1345,46 +1354,44 @@
                         },
                         [g],
                     );
-                return (
-                        (0, i.jsxs)(p.a, {
-                            className: H().root,
-                            title: 'Ynison Remote',
-                            headerClassName: H().modalHeader,
-                            contentClassName: H().modalContent,
-                            open: t.isOpened,
-                            onOpenChange: t.onOpenChange,
-                            onClose: t.close,
-                            size: 'fitContent',
-                            placement: 'center',
-                            style: { 'max-width': '34.375rem', height: 'auto' },
-                            labelClose: e({ id: 'interface-actions.close' }),
-                            children: (0, i.jsxs)('ul', {
-                                className: `${B().root} ${H().list}`,
-                                style: { width: '32.125rem', gap: 0 },
-                                children: [
-                                    (0, i.jsx)('li', {
-                                        className: B().item,
-                                        children: (0, i.jsx)(P, {
-                                            title: ['Удалённое управление', (0, i.jsx)(labeledBubble, { label: 'BETA' })],
-                                            description: 'Даст возможность управлять этим плеером с других устройств',
-                                            onChange: onEnableYnisonRemoteControlToggle,
-                                            isChecked: enableYnisonRemote,
-                                        }),
-                                    }),
-                                    (0, i.jsx)('li', {
-                                        className: B().item,
-                                        children: (0, i.jsx)(P, {
-                                            title: ['Перехват Ynison', (0, i.jsx)(labeledBubble, { label: 'BETA', disabled: !enableYnisonRemote })],
-                                            description: 'Воспроизведение с других плееров будет автоматически переходить на этот плеер',
-                                            onChange: onYnisonInterceptPlaybackToggle,
-                                            isChecked: interceptYnison,
-                                            disabled: !enableYnisonRemote,
-                                        }),
-                                    }),
-                                ],
+                return (0, i.jsxs)(p.a, {
+                    className: H().root,
+                    title: 'Ynison Remote',
+                    headerClassName: H().modalHeader,
+                    contentClassName: H().modalContent,
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    style: { 'max-width': '34.375rem', height: 'auto' },
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, i.jsxs)('ul', {
+                        className: `${B().root} ${H().list}`,
+                        style: { width: '32.125rem', gap: 0 },
+                        children: [
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: ['Удалённое управление', (0, i.jsx)(labeledBubble, { label: 'BETA' })],
+                                    description: 'Даст возможность управлять этим плеером с других устройств',
+                                    onChange: onEnableYnisonRemoteControlToggle,
+                                    isChecked: enableYnisonRemote,
+                                }),
                             }),
-                        })
-                );
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: ['Перехват Ynison', (0, i.jsx)(labeledBubble, { label: 'BETA', disabled: !enableYnisonRemote })],
+                                    description: 'Воспроизведение с других плееров будет автоматически переходить на этот плеер',
+                                    onChange: onYnisonInterceptPlaybackToggle,
+                                    isChecked: interceptYnison,
+                                    disabled: !enableYnisonRemote,
+                                }),
+                            }),
+                        ],
+                    }),
+                });
             });
 
             let playerBarEnhancementsSettings = (0, n.PA)(() => {
@@ -1393,9 +1400,10 @@
                         modals: { playerBarEnhancementsSettingsModal: t },
                     } = (0, _.Pjs)(),
                     { notify: j } = (0, _.lkh)(),
-                    onWhitePlayButtonToggle = (0, d.useCallback)(async (e) => {
-                        console.log('modFeatures.playerBarEnhancement.whitePlayButton toggled. Value: ', e);
-                        window.nativeSettings.set('modFeatures.playerBarEnhancement.whitePlayButton', e);
+                    onWhitePlayButtonToggle = (0, d.useCallback)(
+                        async (e) => {
+                            console.log('modFeatures.playerBarEnhancement.whitePlayButton toggled. Value: ', e);
+                            window.nativeSettings.set('modFeatures.playerBarEnhancement.whitePlayButton', e);
                             j(
                                 (0, i.jsx)(m.hT, {
                                     error: 'Для применения этой настройки требуется перезапуск приложения',
@@ -1403,31 +1411,42 @@
                                 { containerId: _.uQT.ERROR },
                             );
                         },
-                        [j]),
+                        [j],
+                    ),
                     onSwapDislikeToggle = (0, d.useCallback)(async (e) => {
                         console.log('modFeatures.playerBarEnhancement.showDislikeButton toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.playerBarEnhancement.showDislikeButton', e);
-                        setTimeout(()=>{window.forcePlayerBarRerender?.()}, 100); // Dirty workaround
+                        setTimeout(() => {
+                            window.forcePlayerBarRerender?.();
+                        }, 100); // Dirty workaround
                     }, []),
                     onShowRepeatButtonOnVibe = (0, d.useCallback)(async (e) => {
                         console.log('modFeatures.playerBarEnhancement.showRepeatButtonOnVibe toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.playerBarEnhancement.showRepeatButtonOnVibe', e);
-                        setTimeout(()=>{window.forcePlayerBarRerender?.()}, 100); // Dirty workaround
+                        setTimeout(() => {
+                            window.forcePlayerBarRerender?.();
+                        }, 100); // Dirty workaround
                     }, []),
                     onShowCodecToggle = (0, d.useCallback)(async (e) => {
                         console.log('modFeatures.playerBarEnhancement.showCodecInsteadOfQualityMark toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.playerBarEnhancement.showCodecInsteadOfQualityMark', e);
-                        setTimeout(()=>{window.forcePlayerBarRerender?.()}, 100); // Dirty workaround
+                        setTimeout(() => {
+                            window.forcePlayerBarRerender?.();
+                        }, 100); // Dirty workaround
                     }, []),
                     onAlwaysShowPlayerTimestampsToggle = (0, d.useCallback)(async (e) => {
                         console.log('modFeatures.playerBarEnhancement.alwaysShowPlayerTimestamps toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.playerBarEnhancement.alwaysShowPlayerTimestamps', e);
-                        setTimeout(()=>{window.forcePlayerBarRerender?.()}, 100); // Dirty workaround
+                        setTimeout(() => {
+                            window.forcePlayerBarRerender?.();
+                        }, 100); // Dirty workaround
                     }, []),
                     onDisablePerTrackColorsToggle = (0, d.useCallback)(async (e) => {
                         console.log('modFeatures.playerBarEnhancement.disablePerTrackColors toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.playerBarEnhancement.disablePerTrackColors', e);
-                        setTimeout(()=>{window.forcePlayerBarRerender?.()}, 100); // Dirty workaround
+                        setTimeout(() => {
+                            window.forcePlayerBarRerender?.();
+                        }, 100); // Dirty workaround
                     }, []),
                     onAlwaysWideBarToggle = (0, d.useCallback)(
                         async (e) => {
@@ -1526,6 +1545,81 @@
                 });
             });
 
+            let audioSettings = (0, n.PA)(() => {
+                let { formatMessage: e } = (0, r.A)(),
+                    {
+                        modals: { audioSettingsModal: t },
+                        sonataState: v,
+                    } = (0, _.Pjs)(),
+                    g = (0, _.iIU)(),
+                    { notify: j } = (0, _.lkh)(),
+                    onTryEnableSurroundAudioToggle = (0, d.useCallback)(
+                        (e) => {
+                            console.log('modFeatures.tryEnableSurroundAudio toggled. Value: ', e);
+                            window.nativeSettings.set('modFeatures.tryEnableSurroundAudio', e);
+                            j(
+                                (0, i.jsx)(m.hT, {
+                                    error: 'Для применения этой настройки требуется перезапуск приложения',
+                                }),
+                                { containerId: _.uQT.ERROR },
+                            );
+                        },
+                        [j],
+                    ),
+                    onR128NormalizationToggle = (0, d.useCallback)(
+                        async (e) => {
+                            var t;
+                            console.log('modFeatures.r128Normalization toggled. Value: ', e);
+                            window.nativeSettings.set('modFeatures.r128Normalization', e);
+                            let a = null == (t = null == v ? void 0 : v.state) || null == t.queueState ? void 0 : t.queueState.currentEntity.value,
+                                o = null == a ? void 0 : a.entity.data.meta.r128;
+                            null == g ||
+                                null == g.graphs ||
+                                g.graphs.forEach((t) => {
+                                    t.setR128Gain(o, e);
+                                });
+                        },
+                        [g, v],
+                    );
+                return (0, i.jsxs)(p.a, {
+                    className: H().root,
+                    style: { 'max-width': '34.375rem', height: 'auto' },
+                    title: 'Настройки аудио',
+                    headerClassName: H().modalHeader,
+                    contentClassName: H().modalContent,
+                    open: t.isOpened,
+                    onOpenChange: t.onOpenChange,
+                    onClose: t.close,
+                    size: 'fitContent',
+                    placement: 'center',
+                    labelClose: e({ id: 'interface-actions.close' }),
+                    children: (0, i.jsxs)('ul', {
+                        className: `${B().root} ${H().list}`,
+                        style: { width: '32.125rem', 'max-height': '37.5rem', gap: 0 },
+                        children: [
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: ['Нормализация громкости', (0, i.jsx)(labeledBubble, { label: 'r128', tooltip: null })],
+                                    description: 'Приводит громкость треков к единому уровню.',
+                                    onChange: onR128NormalizationToggle,
+                                    isChecked: window.nativeSettings.get('modFeatures.r128Normalization') ?? !0,
+                                }),
+                            }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: ['Попробовать включить пространственный звук', (0, i.jsx)(labeledBubble, { label: 'ALPHA' })],
+                                    description: 'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
+                                    onChange: onTryEnableSurroundAudioToggle,
+                                    isChecked: window.nativeSettings.get('modFeatures.tryEnableSurroundAudio'),
+                                }),
+                            }),
+                        ],
+                    }),
+                });
+            });
+
             let windowBehaviorSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -1545,17 +1639,20 @@
                         console.log('minimizeToTrayOnWindowClose toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.windowBehavior.minimizeToTrayOnWindowClose', e);
                     }, []),
-                    onTaskbarExtensionsEnableToggle = (0, d.useCallback)(async (e) => {
-                        console.log('taskBarExtensions.enable toggled. Value: ', e);
-                        window.nativeSettings.set('modFeatures.taskBarExtensions.enable', e);
+                    onTaskbarExtensionsEnableToggle = (0, d.useCallback)(
+                        async (e) => {
+                            console.log('taskBarExtensions.enable toggled. Value: ', e);
+                            window.nativeSettings.set('modFeatures.taskBarExtensions.enable', e);
                             j(
                                 (0, i.jsx)(m.hT, {
                                     error: 'Для применения этой настройки требуется перезапуск приложения',
                                 }),
                                 { containerId: _.uQT.ERROR },
                             );
-                        setIsTaskbarExtensionsEnabled(e);
-                    }, [j]),
+                            setIsTaskbarExtensionsEnabled(e);
+                        },
+                        [j],
+                    ),
                     onTaskbarExtensionsCoverAsThumbnailToggle = (0, d.useCallback)(
                         async (e) => {
                             console.log('taskBarExtensions.coverAsThumbnail toggled. Value: ', e);
@@ -1658,7 +1755,6 @@
                 });
             });
 
-
             let miniplayerSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -1738,7 +1834,6 @@
                 });
             });
 
-
             let vibeBehaviorEnhancementsSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -1755,7 +1850,7 @@
                     }, []);
                 return (0, i.jsxs)(p.a, {
                     className: H().root,
-                    style: { 'max-width': '34.375rem', height: 'auto', },
+                    style: { 'max-width': '34.375rem', height: 'auto' },
                     title: 'Поведение Моей Волны',
                     headerClassName: H().modalHeader,
                     contentClassName: H().modalContent,
@@ -1791,7 +1886,6 @@
                     }),
                 });
             });
-
 
             let vibeAnimationEnhancementsSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
@@ -1950,7 +2044,6 @@
                 });
             });
 
-
             let appUpdatesSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -2047,7 +2140,6 @@
                 });
             });
 
-
             let systemSettings = (0, n.PA)(() => {
                 let { formatMessage: e } = (0, r.A)(),
                     {
@@ -2057,6 +2149,16 @@
                     onPreventDisplaySleepToggle = (0, d.useCallback)((e) => {
                         console.log('preventDisplaySleep toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.windowBehavior.preventDisplaySleep', e);
+                    }, []),
+                    onSendAnonymizedMetricsToggle = (0, d.useCallback)((e) => {
+                        console.log('sendAnonymizedMetrics toggled. Value: ', e);
+                        window.nativeSettings.set('sendAnonymizedMetrics', e);
+                        j(
+                            (0, i.jsx)(m.hT, {
+                                error: 'Для применения этой настройки требуется перезапуск приложения',
+                            }),
+                            { containerId: _.uQT.ERROR },
+                        );
                     }, []),
                     onAutoLaunchOnSystemStartupToggle = (0, d.useCallback)(
                         (e) => {
@@ -2075,19 +2177,6 @@
                         console.log('startMinimized toggled. Value: ', e);
                         window.nativeSettings.set('modFeatures.windowBehavior.startMinimized', e);
                     }, []),
-                    onTryEnableSurroundAudioToggle = (0, d.useCallback)(
-                        (e) => {
-                            console.log('tryEnableSurroundAudio toggled. Value: ', e);
-                            window.nativeSettings.set('modFeatures.tryEnableSurroundAudio', e);
-                            j(
-                                (0, i.jsx)(m.hT, {
-                                    error: 'Для применения этой настройки требуется перезапуск приложения',
-                                }),
-                                { containerId: _.uQT.ERROR },
-                            );
-                        },
-                        [j],
-                    ),
                     onEnableHardwareAccelerationToggle = (0, d.useCallback)(
                         (e) => {
                             console.log('enableHardwareAcceleration toggled. Value: ', e);
@@ -2142,15 +2231,6 @@
                             (0, i.jsx)('li', {
                                 className: B().item,
                                 children: (0, i.jsx)(P, {
-                                    title: ['Пространственный звук', (0, i.jsx)(labeledBubble, { label: 'ALPHA' })],
-                                    description: 'Включает поддержку систем 5.1 / 7.1 (Учтите что звук останется в стерео)',
-                                    onChange: onTryEnableSurroundAudioToggle,
-                                    isChecked: window.nativeSettings.get('modFeatures.tryEnableSurroundAudio'),
-                                }),
-                            }),
-                            (0, i.jsx)('li', {
-                                className: B().item,
-                                children: (0, i.jsx)(P, {
                                     title: 'Запускать приложение при старте системы',
                                     onChange: onAutoLaunchOnSystemStartupToggle,
                                     isChecked: window.nativeSettings.get('modFeatures.windowBehavior.autoLaunchOnSystemStartup'),
@@ -2174,11 +2254,19 @@
                                     isChecked: window.nativeSettings.get('modFeatures.globalShortcuts.enable'),
                                 }),
                             }),
+                            (0, i.jsx)('li', {
+                                className: B().item,
+                                children: (0, i.jsx)(P, {
+                                    title: 'Отправлять анонимную статистику',
+                                    description: 'Отключит отправку стаитстики Мода его разработчику. Не влияет на метрику Яндекса',
+                                    onChange: onSendAnonymizedMetricsToggle,
+                                    isChecked: window.nativeSettings.get('sendAnonymizedMetrics'),
+                                }),
+                            }),
                         ],
                     }),
                 });
             });
-
 
             var F = o(89468),
                 B = o.n(F);
@@ -2201,6 +2289,7 @@
                             downloaderSettingsModal: downloaderSettingsModal,
                             systemSettingsModal: systemSettingsModal,
                             ynisonSettingsModal: ynisonSettingsModal,
+                            audioSettingsModal: audioSettingsModal,
                         },
                         experiments: a,
                         wizard: c,
@@ -2584,6 +2673,17 @@
                                         onClick: playerBarEnhancementsSettingsModal.open,
                                     }),
                                     (0, i.jsx)(playerBarEnhancementsSettings, {}),
+                                ],
+                            }),
+                            (0, i.jsxs)('li', {
+                                className: B().item,
+                                children: [
+                                    (0, i.jsx)(S, {
+                                        title: 'Настройки аудио',
+                                        description: 'Нормализация громкости и пространственный звук',
+                                        onClick: audioSettingsModal.open,
+                                    }),
+                                    (0, i.jsx)(audioSettings, {}),
                                 ],
                             }),
                             (0, i.jsx)('li', {
